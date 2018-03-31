@@ -175,4 +175,15 @@ const rankHand = function rank(hand) {
   console.log(handOutput + handType)
 }
 
-export { rankHand }
+const privates = {
+  enumerateRanks: enumerateRanks,
+  checkFlush: checkFlush,
+  checkStraight: checkStraight,
+  checkAceKing: checkAceKing,
+  checkSets: checkSets,
+  getRank: getRank,
+  checkHighCard: checkHighCard,
+}
+
+export default rankHand
+export { privates }
