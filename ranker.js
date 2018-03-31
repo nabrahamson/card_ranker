@@ -1,4 +1,4 @@
-import (countBy, each, has, invert, map, uniq) from 'lodash';
+import {countBy, each, has, invert, map, uniq} from 'lodash';
 
 const highCards = {
   A: 13,
@@ -75,9 +75,10 @@ const rank_hand = function rank(hand) {
       handType += high_card(ranks);
       handType += ')';
     }
+  }
 
-    // print ranking to console
-    console.log(handOutput + handType);
+  // print ranking to console
+  console.log(handOutput + handType);
 }
 
 const is_flush = function flush(suits) {
@@ -93,7 +94,7 @@ const is_straight = function straight(ranks) {
   const sortedRanks = enumeratedRanks.sort();
 
   // check for A, 2, 3, 4, 5
-  if(sortedRanks[4] === 13 and sortedRanks.slice(0,3) === [2, 3, 4, 5]) {
+  if(sortedRanks[4] === 13 && sortedRanks.slice(0,3) === [2, 3, 4, 5]) {
     return true;
   }
 
@@ -102,7 +103,7 @@ const is_straight = function straight(ranks) {
     return true;
   }
   return false;
-};
+}
 
 const has_ace_king = function ace_king(ranks) {
   if (ranks.includes('A') && ranks.includes('K')) {
@@ -169,3 +170,4 @@ const enumerate_ranks = function enumerate(ranks) {
 
   return numericRanks.sort();
 }
+
