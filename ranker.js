@@ -1,17 +1,19 @@
 import {
   countBy,
+  difference,
   each,
   has,
   invert,
   map,
+  range,
   uniq,
 } from 'lodash'
 
 const highCards = {
-  A: 13,
-  K: 12,
-  Q: 11,
-  J: 10,
+  A: 14,
+  K: 13,
+  Q: 12,
+  J: 11,
 }
 
 const enumerateRanks = function enumerate(ranks) {
@@ -22,7 +24,9 @@ const enumerateRanks = function enumerate(ranks) {
     return parseInt(card, 10)
   })
 
-  return numericRanks.sort()
+  return numericRanks.sort((a, b) => {
+    return a - b
+  })
 }
 
 const checkFlush = function flush(suits) {
@@ -34,19 +38,28 @@ const checkFlush = function flush(suits) {
 }
 
 const checkStraight = function straight(ranks) {
-  const enumeratedRanks = enumerateRanks(ranks)
-  const sortedRanks = enumeratedRanks.sort()
+  const sortedRanks = enumerateRanks(ranks)
 
   // check for A, 2, 3, 4, 5
-  if (sortedRanks[4] === 13 && sortedRanks.slice(0, 3) === [2, 3, 4, 5]) {
-    return true
+
+  if (sortedRanks[4] === 14) {
+    const diffArray = difference(sortedRanks.slice(0, 4), [2, 3, 4, 5])
+    if (diffArray.length === 0) {
+      return true
+    }
   }
 
-  const headTailDifference = sortedRanks[4] - sortedRanks[0]
-  if (headTailDifference === 4) {
-    return true
-  }
-  return false
+  // iterate over the range of ranks to determine if they are in sequence
+  const indexes = range(0, 4)
+  let isSequence = true
+  each(indexes, index => {
+    if ((sortedRanks[index + 1] - sortedRanks[index]) !== 1) {
+      isSequence = false
+      return false
+    }
+  })
+
+  return isSequence
 }
 
 const checkAceKing = function aceKing(ranks) {
@@ -95,7 +108,7 @@ const getRank = function stringRank(value) {
 }
 
 const checkHighCard = function high(ranks) {
-  const highCard = (ranks.sort())[4]
+  const highCard = (enumerateRanks(ranks))[4]
   if (highCard > 10) {
     return (invert(highCards))[highCard]
   }
