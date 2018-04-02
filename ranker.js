@@ -16,6 +16,14 @@ const highCards = {
   J: 11,
 }
 
+const cardNames = {
+  A: 'Ace',
+  K: 'King',
+  Q: 'Queen',
+  J: 'Jack',
+}
+
+
 const enumerateRanks = function enumerate(ranks) {
   const numericRanks = map(ranks, card => {
     if (has(highCards, card)) {
@@ -39,23 +47,20 @@ const checkFlush = function flush(suits) {
 
 const checkStraight = function straight(ranks) {
   const sortedRanks = enumerateRanks(ranks)
+  let isSequence = true
+  let indexes
 
   // check for A, 2, 3, 4, 5
-
   if (sortedRanks[4] === 14) {
-    const diffArray = difference(sortedRanks.slice(0, 4), [2, 3, 4, 5])
-    if (diffArray.length === 0) {
-      return true
-    }
+    indexes = range(0,3)
+  } else {
+    indexes = range(0,4)
   }
 
   // iterate over the range of ranks to determine if they are in sequence
-  const indexes = range(0, 4)
-  let isSequence = true
   each(indexes, index => {
     if ((sortedRanks[index + 1] - sortedRanks[index]) !== 1) {
       isSequence = false
-      return false
     }
   })
 
@@ -100,21 +105,21 @@ const checkSets = function setCheck(ranks) {
   return sets
 }
 
+const checkHighCard = function high(ranks) {
+  const highCard = (enumerateRanks(ranks))[4]
+  let cardRank = highCard
+  if (highCard > 10) {
+    cardRank = (invert(highCards))[highCard]
+  }
+  return getRank(cardRank)
+}
+
 const getRank = function stringRank(value) {
-  if (value > 10) {
-    return (invert(highCards))[value]
+  if (value in cardNames) {
+    return cardNames[value]
   }
   return value
 }
-
-const checkHighCard = function high(ranks) {
-  const highCard = (enumerateRanks(ranks))[4]
-  if (highCard > 10) {
-    return (invert(highCards))[highCard]
-  }
-  return highCard
-}
-
 
 const rankHand = function rank(hand) {
   let flushSuit
@@ -123,13 +128,21 @@ const rankHand = function rank(hand) {
   let sets = {}
   let handType
 
-  const handOutput = 'Hand: ' + hand + ' '
+  const handOutput = 'Hand: ' + hand.join(' ') + ' '
 
   const suits = map(hand, card => {
-    return card[1]
+    if (card.length === 3) {
+      return card[2]
+    } else {
+      return card[1]
+    }
   })
   const ranks = map(hand, card => {
-    return card[0]
+    if (card.length === 3) {
+      return card.slice(0,2)
+    } else {
+      return card[0]
+    }
   })
 
   // Check for flush or straight
@@ -159,14 +172,14 @@ const rankHand = function rank(hand) {
     if (has(sets, 'quad')) {
       handType = '(Four of a kind '
       handType += getRank(sets.quad)
-      handType += ')'
+      handType += 's)'
     } else if (has(sets, 'triple')) {
       if (has(sets, 'pairs')) {
         handType = '(Full House)'
       } else {
         handType = '(Three of a kind '
         handType += getRank(sets.triple)
-        handType += ')'
+        handType += 's)'
       }
     } else if (has(sets, 'pairs')) {
       if (sets.pairs.length === 2) {
@@ -174,7 +187,7 @@ const rankHand = function rank(hand) {
       } else {
         handType = '(Pair of '
         handType += getRank(sets.pairs[0])
-        handType += ')'
+        handType += 's)'
       }
     } else {
       // This is a high card hand

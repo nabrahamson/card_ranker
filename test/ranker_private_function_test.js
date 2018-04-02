@@ -178,50 +178,50 @@ describe('#getRank', () => {
     actual = privates.getRank(value)
     expect(actual).to.equal(value)
   })
-  it('should return an "A" when passed 14', () => {
-    const value = 14
+  it('should return "Ace" when passed A', () => {
+    const value = 'A'
     const actual = privates.getRank(value)
-    expect(actual).to.equal('A')
+    expect(actual).to.equal('Ace')
   })
-  it('should return an "K" when passed 13', () => {
-    const value = 13
+  it('should return "King" when passed K', () => {
+    const value = 'K'
     const actual = privates.getRank(value)
-    expect(actual).to.equal('K')
+    expect(actual).to.equal('King')
   })
-  it('should return an "Q" when passed 12', () => {
-    const value = 12
+  it('should return  "Queen" when passed Q', () => {
+    const value = 'Q'
     const actual = privates.getRank(value)
-    expect(actual).to.equal('Q')
+    expect(actual).to.equal('Queen')
   })
-  it('should return an "J" when passed 11', () => {
-    const value = 11
+  it('should return an "Jack" when passed J', () => {
+    const value = 'J'
     const actual = privates.getRank(value)
-    expect(actual).to.equal('J')
+    expect(actual).to.equal('Jack')
   })
 })
 
 describe('#checkHighCard', () => {
-  it('should return an "A" when the highest card is an Ace', () => {
+  it('should return "Ace" when the highest card is an Ace', () => {
     const ranks = ['A', '9', '9', 'K', '9']
-    const expected = 'A'
+    const expected = 'Ace'
     const actual = privates.checkHighCard(ranks)
     expect(actual).to.equal(expected)
   })
-  it('should return an "K" when the highest card is an King', () => {
+  it('should return "King" when the highest card is an King', () => {
     const ranks = ['10', '9', '9', 'K', '9']
-    const expected = 'K'
+    const expected = 'King'
     const actual = privates.checkHighCard(ranks)
     expect(actual).to.equal(expected)
   })
-  it('should return an "Q" when the highest card is an Queen', () => {
+  it('should return "Queen" when the highest card is an Queen', () => {
     const ranks = ['4', '9', '9', '8', 'Q']
-    const expected = 'Q'
+    const expected = 'Queen'
     const actual = privates.checkHighCard(ranks)
     expect(actual).to.equal(expected)
   })
-  it('should return an "J" when the highest card is a Jack', () => {
+  it('should return an "Jack" when the highest card is a Jack', () => {
     const ranks = ['J', '9', '3', '4', '9']
-    const expected = 'J'
+    const expected = 'Jack'
     const actual = privates.checkHighCard(ranks)
     expect(actual).to.equal(expected)
   })
