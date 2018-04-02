@@ -1,18 +1,28 @@
 import {
   countBy,
+  difference,
   each,
   has,
   invert,
   map,
+  range,
   uniq,
 } from 'lodash'
 
 const highCards = {
-  A: 13,
-  K: 12,
-  Q: 11,
-  J: 10,
+  A: 14,
+  K: 13,
+  Q: 12,
+  J: 11,
 }
+
+const cardNames = {
+  A: 'Ace',
+  K: 'King',
+  Q: 'Queen',
+  J: 'Jack',
+}
+
 
 const enumerateRanks = function enumerate(ranks) {
   const numericRanks = map(ranks, card => {
@@ -22,7 +32,9 @@ const enumerateRanks = function enumerate(ranks) {
     return parseInt(card, 10)
   })
 
-  return numericRanks.sort()
+  return numericRanks.sort((a, b) => {
+    return a - b
+  })
 }
 
 const checkFlush = function flush(suits) {
@@ -34,19 +46,25 @@ const checkFlush = function flush(suits) {
 }
 
 const checkStraight = function straight(ranks) {
-  const enumeratedRanks = enumerateRanks(ranks)
-  const sortedRanks = enumeratedRanks.sort()
+  const sortedRanks = enumerateRanks(ranks)
+  let isSequence = true
+  let indexes
 
   // check for A, 2, 3, 4, 5
-  if (sortedRanks[4] === 13 && sortedRanks.slice(0, 3) === [2, 3, 4, 5]) {
-    return true
+  if (sortedRanks[4] === 14) {
+    indexes = range(0,3)
+  } else {
+    indexes = range(0,4)
   }
 
-  const headTailDifference = sortedRanks[4] - sortedRanks[0]
-  if (headTailDifference === 4) {
-    return true
-  }
-  return false
+  // iterate over the range of ranks to determine if they are in sequence
+  each(indexes, index => {
+    if ((sortedRanks[index + 1] - sortedRanks[index]) !== 1) {
+      isSequence = false
+    }
+  })
+
+  return isSequence
 }
 
 const checkAceKing = function aceKing(ranks) {
@@ -87,21 +105,21 @@ const checkSets = function setCheck(ranks) {
   return sets
 }
 
+const checkHighCard = function high(ranks) {
+  const highCard = (enumerateRanks(ranks))[4]
+  let cardRank = highCard
+  if (highCard > 10) {
+    cardRank = (invert(highCards))[highCard]
+  }
+  return getRank(cardRank)
+}
+
 const getRank = function stringRank(value) {
-  if (value > 10) {
-    return (invert(highCards))[value]
+  if (value in cardNames) {
+    return cardNames[value]
   }
   return value
 }
-
-const checkHighCard = function high(ranks) {
-  const highCard = (ranks.sort())[4]
-  if (highCard > 10) {
-    return (invert(highCards))[highCard]
-  }
-  return highCard
-}
-
 
 const rankHand = function rank(hand) {
   let flushSuit
@@ -110,13 +128,21 @@ const rankHand = function rank(hand) {
   let sets = {}
   let handType
 
-  const handOutput = 'Hand: ' + hand + ' '
+  const handOutput = 'Hand: ' + hand.join(' ') + ' '
 
   const suits = map(hand, card => {
-    return card[1]
+    if (card.length === 3) {
+      return card[2]
+    } else {
+      return card[1]
+    }
   })
   const ranks = map(hand, card => {
-    return card[0]
+    if (card.length === 3) {
+      return card.slice(0,2)
+    } else {
+      return card[0]
+    }
   })
 
   // Check for flush or straight
@@ -146,14 +172,14 @@ const rankHand = function rank(hand) {
     if (has(sets, 'quad')) {
       handType = '(Four of a kind '
       handType += getRank(sets.quad)
-      handType += ')'
+      handType += 's)'
     } else if (has(sets, 'triple')) {
       if (has(sets, 'pairs')) {
         handType = '(Full House)'
       } else {
         handType = '(Three of a kind '
         handType += getRank(sets.triple)
-        handType += ')'
+        handType += 's)'
       }
     } else if (has(sets, 'pairs')) {
       if (sets.pairs.length === 2) {
@@ -161,7 +187,7 @@ const rankHand = function rank(hand) {
       } else {
         handType = '(Pair of '
         handType += getRank(sets.pairs[0])
-        handType += ')'
+        handType += 's)'
       }
     } else {
       // This is a high card hand
@@ -175,4 +201,15 @@ const rankHand = function rank(hand) {
   console.log(handOutput + handType)
 }
 
-export { rankHand }
+const privates = {
+  enumerateRanks: enumerateRanks,
+  checkFlush: checkFlush,
+  checkStraight: checkStraight,
+  checkAceKing: checkAceKing,
+  checkSets: checkSets,
+  getRank: getRank,
+  checkHighCard: checkHighCard,
+}
+
+export default rankHand
+export { privates }
