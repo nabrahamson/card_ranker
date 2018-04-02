@@ -1,6 +1,5 @@
 import {
   countBy,
-  difference,
   each,
   has,
   invert,
@@ -52,9 +51,9 @@ const checkStraight = function straight(ranks) {
 
   // check for A, 2, 3, 4, 5
   if (sortedRanks[4] === 14) {
-    indexes = range(0,3)
+    indexes = range(0, 3)
   } else {
-    indexes = range(0,4)
+    indexes = range(0, 4)
   }
 
   // iterate over the range of ranks to determine if they are in sequence
@@ -105,6 +104,13 @@ const checkSets = function setCheck(ranks) {
   return sets
 }
 
+const getRank = function stringRank(value) {
+  if (value in cardNames) {
+    return cardNames[value]
+  }
+  return value
+}
+
 const checkHighCard = function high(ranks) {
   const highCard = (enumerateRanks(ranks))[4]
   let cardRank = highCard
@@ -112,13 +118,6 @@ const checkHighCard = function high(ranks) {
     cardRank = (invert(highCards))[highCard]
   }
   return getRank(cardRank)
-}
-
-const getRank = function stringRank(value) {
-  if (value in cardNames) {
-    return cardNames[value]
-  }
-  return value
 }
 
 const rankHand = function rank(hand) {
@@ -133,16 +132,14 @@ const rankHand = function rank(hand) {
   const suits = map(hand, card => {
     if (card.length === 3) {
       return card[2]
-    } else {
-      return card[1]
     }
+    return card[1]
   })
   const ranks = map(hand, card => {
     if (card.length === 3) {
-      return card.slice(0,2)
-    } else {
-      return card[0]
+      return card.slice(0, 2)
     }
+    return card[0]
   })
 
   // Check for flush or straight

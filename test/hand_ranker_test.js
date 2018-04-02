@@ -1,5 +1,4 @@
 import 'babel-polyfill'
-import { expect } from 'chai'
 import rankHand from '../ranker'
 import sinon from 'sinon'
 
