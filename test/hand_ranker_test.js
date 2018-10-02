@@ -19,6 +19,22 @@ describe('#rankHand', () => {
     sinon.assert.calledWith(spy, expected)
     console.log.restore()
   })
+  it('should detect a flush and not a straight flush', () => {
+    let spy = sinon.spy(console, 'log')
+    const hand = ['6s', '5s', 'As', '3s', '4s']
+    const expected = 'Hand: 6s 5s As 3s 4s (Flush)'
+    rankHand(hand)
+    sinon.assert.calledWith(spy, expected)
+    console.log.restore()
+  })
+  it('should detect a high card and not a straight flush', () => {
+    let spy = sinon.spy(console, 'log')
+    const hand = ['6s', '5s', 'Ac', '3s', '4s']
+    const expected = 'Hand: 6s 5s Ac 3s 4s (High card Ace)'
+    rankHand(hand)
+    sinon.assert.calledWith(spy, expected)
+    console.log.restore()
+  })
   it('should detect a flush', () => {
     let spy = sinon.spy(console, 'log')
     const hand = ['As', 'Ks', '5s', '3s', '4s']

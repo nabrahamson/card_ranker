@@ -50,7 +50,7 @@ const checkStraight = function straight(ranks) {
   let indexes
 
   // check for A, 2, 3, 4, 5
-  if (sortedRanks[4] === 14) {
+  if (sortedRanks[4] === 14 && sortedRanks[0] === 2) {
     indexes = range(0, 3)
   } else {
     indexes = range(0, 4)
